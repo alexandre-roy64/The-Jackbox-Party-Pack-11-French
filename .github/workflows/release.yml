@@ -27,14 +27,32 @@ jobs:
     - run: rm -r ./main/games/TriviaRPG
     - run: mkdir -p outputs
     - run: echo "${VERSION}"
-    - name: Zipping windows release
+    - name: Zipping release
       working-directory: main
       run: |
           zip -r ../outputs/JPP11.zip *
+    - name: Checkout to main-beta
+      uses: actions/checkout@v3
+      with:
+          ref: main-beta
+          clean: true
+    - run: mkdir -p outputs
+    - name: Zipping beta release
+      working-directory: main
+      run: |
+          zip -r ../outputs/JPP11-beta.zip *
     - name: Upload release onto Github
       uses: ncipollo/release-action@v1
       with:
          artifacts: 'outputs/JPP11.zip'
+         token: ${{ secrets.GITHUB_TOKEN }}
+         tag: ${{ env.VERSION }}
+         prerelease: false
+         allowUpdates: true
+    - name: Upload release onto Github
+      uses: ncipollo/release-action@v1
+      with:
+         artifacts: 'outputs/JPP11-beta.zip'
          token: ${{ secrets.GITHUB_TOKEN }}
          tag: ${{ env.VERSION }}
          prerelease: false
